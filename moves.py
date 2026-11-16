@@ -31,6 +31,40 @@ def coor2sym(vec2):
     if not filter_oob((y, x)):      # stops negative indexes from wrapping
         return None
     return game.arena8[y-1][x-1]
+def coll_filter(spos, offsets, me):
+    legal = []
+
+    for dy, dx in offsets:
+        steps = max(abs(dy), abs(dx))
+
+        sy = (dy > 0) - (dy < 0)
+        sx = (dx > 0) - (dx < 0)
+
+        blocked = False
+
+        for i in range(1, steps + 1):
+            move = add_vec2(spos, (sy * i, sx * i))
+
+            if not filter_oob(move):
+                blocked = True
+                break
+
+            target = coor2sym(move)
+
+            if target is not None:
+                # Enemy can be captured only at the collision square
+                if target[0] != me and i == steps:
+                    legal.append((dy, dx))
+
+                blocked = True
+                break
+
+        if not blocked:
+            legal.append((dy, dx))
+
+    return legal
+
+
 
 def is_en_passant(spos, diag, me):
     last = var.last_move
@@ -43,18 +77,21 @@ def is_en_passant(spos, diag, me):
 
 def get_legal_moves(scoor):
     blank = []
-    if scoor == "None":             # clicked outside the board
-        return blank
+    if scoor == "None":return blank # clicked outside the board
     sym = coor2sym(scoor)
-    if sym is None:                 # clicked an empty square
-        return blank
-    if sym[1:] == "P":
-        return P(scoor)
+    if sym is None:return blank     # clicked an empty square
+    if sym[1:] == "P":return P(scoor)
+    if sym[1:] == "Kn":return Kn(scoor)
+    if sym[1:] == "K":return K(scoor)
+    if sym[1:] == "R":return R(scoor)
+    if sym[1:] == "B":return B(scoor)
+    if sym[1:] == "Q":return Q(scoor)
     return blank                       # other pieces: later
 
 def P(scoor):
     sym = coor2sym(scoor)
     spos = coor2vec(scoor)          # [y, x]
+    #print(f"SCOOR:{scoor}::SYM:{sym}::SPOS:{spos}")
     me = sym[0]
     if me == "w":
         dy, start_row = -1, var.board_size - 1
@@ -85,8 +122,143 @@ def P(scoor):
     return legal
   
   
-  
+def Kn(scoor):
+    sym = coor2sym(scoor)
+    spos = coor2vec(scoor)          # [y, x]
+    sclr = sym[0]                     # w or b
+    enemy_color = game.enemy_color(sclr)
 
+    legal = []
+
+    offsets = [(-2,-1),(-2,+1),(-1,+2),(+1,+2),(+2,+1),(+2,-1),(+1,-2),(-1,-2)]
+    #spos + offsets = legal_moves
+    legal_moves_offset = []
+    for offset in offsets:
+        move = add_vec2(spos, offset)
+
+        if filter_oob(move):
+            target = coor2sym(move)
+
+            if target is None or target[0] == enemy_color:
+                legal_moves_offset.append(move)
+            
+    legal = legal_moves_offset
+    return legal
+  
+def K(scoor):
+    sym = coor2sym(scoor)
+    spos = coor2vec(scoor)          # [y, x]
+    sclr = sym[0]                     # w or b
+    enemy_color = game.enemy_color(sclr)
+
+    legal = []
+
+    offsets = [(-1,-1),(-1,0),(-1,+1),(0,-1),(0,+1),(+1,-1),(+1,0),(+1,+1)]
+    #spos + offsets = legal_moves
+    legal_moves_offset = []
+    for offset in offsets:
+        move = add_vec2(spos, offset)
+
+        if filter_oob(move):
+            target = coor2sym(move)
+
+            if target is None or target[0] == enemy_color:
+                legal_moves_offset.append(move)
+            
+    legal = legal_moves_offset
+    return legal
+  
+def R(scoor):
+    sym = coor2sym(scoor)
+    spos = coor2vec(scoor)          # [y, x]
+    sclr = sym[0]                     # w or b
+    enemy_color = game.enemy_color(sclr)
+
+    legal = []
+
+    offsets = [(0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(0,7),(1,0),(2,0),(3,0),(4,0),(5,0),(6,0),(7,0),(0,-1),(0,-2),(0,-3),(0,-4),(0,-5),(0,-6),(0,-7),(-1,0),(-2,0),(-3,0),(-4,0),(-5,0),(-6,0),(-7,0)]
+    offsets = coll_filter(spos, offsets, sclr) #COLLISION FILTER
+    
+    #spos + offsets = legal_moves
+    legal_moves_offset = []
+    for offset in offsets:
+        move = add_vec2(spos, offset)
+
+        if filter_oob(move):
+            target = coor2sym(move)
+
+            if target is None or target[0] == enemy_color:
+                legal_moves_offset.append(move)
+            
+    legal = legal_moves_offset
+    return legal
+  
+def B(scoor):
+    sym = coor2sym(scoor)
+    spos = coor2vec(scoor)          # [y, x]
+    sclr = sym[0]                     # w or b
+    enemy_color = game.enemy_color(sclr)
+
+    legal = []
+
+    offsets = [(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(7,7),(-1,-1),(-2,-2),(-3,-3),(-4,-4),(-5,-5),(-6,-6),(-7,-7),(1,-1),(2,-2),(3,-3),(4,-4),(5,-5),(6,-6),(7,-7),(-1,1),(-2,2),(-3,3),(-4,4),(-5,5),(-6,6),(-7,7)]
+    offsets = coll_filter(spos, offsets, sclr) #COLLISION FILTER
+    
+    #spos + offsets = legal_moves
+    legal_moves_offset = []
+    for offset in offsets:
+        move = add_vec2(spos, offset)
+
+        if filter_oob(move):
+            target = coor2sym(move)
+
+            if target is None or target[0] == enemy_color:
+                legal_moves_offset.append(move)
+            
+    legal = legal_moves_offset
+    return legal
+  
+def Q(scoor):
+    sym = coor2sym(scoor)
+    spos = coor2vec(scoor)          # [y, x]
+    sclr = sym[0]                     # w or b
+    enemy_color = game.enemy_color(sclr)
+
+    legal = []
+
+    
+    offsets = [
+        (0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(0,7),
+        (0,-1),(0,-2),(0,-3),(0,-4),(0,-5),(0,-6),(0,-7),
+
+        (1,0),(2,0),(3,0),(4,0),(5,0),(6,0),(7,0),
+        (-1,0),(-2,0),(-3,0),(-4,0),(-5,0),(-6,0),(-7,0),
+
+        (1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(7,7),
+        (-1,-1),(-2,-2),(-3,-3),(-4,-4),(-5,-5),(-6,-6),(-7,-7),
+
+        (1,-1),(2,-2),(3,-3),(4,-4),(5,-5),(6,-6),(7,-7),
+        (-1,1),(-2,2),(-3,3),(-4,4),(-5,5),(-6,6),(-7,7)
+    ]
+    
+    offsets = coll_filter(spos, offsets, sclr) #COLLISION FILTER
+    
+    #spos + offsets = legal_moves
+    legal_moves_offset = []
+    for offset in offsets:
+        move = add_vec2(spos, offset)
+
+        if filter_oob(move):
+            target = coor2sym(move)
+
+            if target is None or target[0] == enemy_color:
+                legal_moves_offset.append(move)
+            
+    legal = legal_moves_offset
+    return legal
+  
+  
+  
 def create_moves_rect(legal_moves_coords, canvas):
   #UPDATE VAR.LEGAL_MOVES
   var.legal_moves = get_legal_moves(var.primary_chip)

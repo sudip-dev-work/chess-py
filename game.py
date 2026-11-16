@@ -1,6 +1,10 @@
 import variables as var
 import moves
 
+def enemy_color(self_color):
+  enemy_color = "b" if self_color == "w" else "w"
+  return enemy_color
+  
 def print_board(board, empty="."):
     width = max(len(p) for row in board for p in row if p)
     width = max(width, len(empty), 2)

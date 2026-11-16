@@ -66,19 +66,39 @@ def init_board(tkinter, window):
   primary_slot_text = debug.create_primary_slot_label(tkinter, window)
 
   def on_motion(event):
-    debug.mouse_over(event, canvas, mouse_over_text)  # updates label + var.active_chip
-    selection_grid(canvas)                            # reads the updated value
+    debug.mouse_over(event, canvas, mouse_over_text)
+    selection_grid(canvas)
+
+    if var.active_chip != var.prev_active_chip:
+        # Stop previous hover animation
+        if var.prev_active_chip is not None:
+            anim.animation(
+                1, arg1=var.prev_active_chip,
+                arg2=canvas, active=False
+            )
+        # Start new hover animation
+        if var.active_chip is not None and var.active_chip != var.primary_chip:
+            anim.animation(
+                1, arg1=var.active_chip,
+                arg2=canvas, active=True
+            )
+        var.prev_active_chip = var.active_chip
+        
   def on_click(event):
+      anim.animation(2, arg1=var.prev_primary_chip, arg2=canvas, active=False) #STOP PRIMARY PIECE ANIMATION
+      
       debug.mouse_click_1(event, canvas, primary_slot_text)
-      anim.animation(2, var.primary_chip, canvas)
+      anim.animation(2, arg1=var.primary_chip, arg2=canvas, active=True) #START PRIMARY PIECE ANIMATION
+      
       if var.primary_chip in var.prev_legal_slots: #check prev prim chip
         move_piece(var.prev_primary_chip, var.primary_chip, canvas, tkinter)#move_piece(i_slot, t_slot)
       else:
-          pass
+          anim.animation(3, canvas, var.prev_primary_chip, True)
       moves.create_moves_rect(moves.get_legal_moves(var.primary_chip), canvas)
       primary_slot_grid(canvas)
       var.prev_legal_slots = moves.coords_to_str(moves.get_legal_moves(var.primary_chip)) #set prev prim chip
       var.prev_primary_chip = var.primary_chip
+      
       
   canvas.bind("<Button-1>", on_click)
   canvas.bind("<Motion>", on_motion)  
@@ -188,6 +208,7 @@ def spawnpc(sym, tkinter, canvas, size, x, y, slot):
     
     
 def move_piece(i_slot, t_slot, canvas, tkinter):
+    #print("MOVE_PIECE board.py runnin...")
     subject = canvas.find_withtag(f"piece&&{i_slot}")
     if not subject:
         return
