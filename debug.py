@@ -79,7 +79,7 @@ def mouse_over(event, canvas, mouse_over_text):
 
     mouse_over_text.config(text=f"Chip: {chip}")
     var.active_chip = chip
-    #print(f"Chip: {var.active_chip}")
+    #############################print(f"Chip: {var.active_chip}")
     
 def mouse_click_1(event, canvas, primary_slot_text):
     items = canvas.find_overlapping(
@@ -98,5 +98,5 @@ def mouse_click_1(event, canvas, primary_slot_text):
 
     primary_slot_text.config(text=f"Chip: {chip}")
     var.primary_chip = chip
-    print(f"Primary Chip: {var.primary_chip} :: {pieces.coor2pc(chip)}[{game.symbol_2_name(pieces.coor2pc(chip))[0]}:::{game.symbol_2_name(pieces.coor2pc(chip))[1]}]")
+    ############################print(f"Primary Chip: {var.primary_chip} :: {pieces.coor2pc(chip)}[{game.symbol_2_name(pieces.coor2pc(chip))[0]}:::{game.symbol_2_name(pieces.coor2pc(chip))[1]}]")
     

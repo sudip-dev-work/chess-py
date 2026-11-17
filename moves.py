@@ -91,7 +91,7 @@ def get_legal_moves(scoor):
 def P(scoor):
     sym = coor2sym(scoor)
     spos = coor2vec(scoor)          # [y, x]
-    #print(f"SCOOR:{scoor}::SYM:{sym}::SPOS:{spos}")
+    ###################print(f"SCOOR:{scoor}::SYM:{sym}::SPOS:{spos}")
     me = sym[0]
     if me == "w":
         dy, start_row = -1, var.board_size - 1
@@ -262,7 +262,7 @@ def Q(scoor):
 def create_moves_rect(legal_moves_coords, canvas):
   #UPDATE VAR.LEGAL_MOVES
   var.legal_moves = get_legal_moves(var.primary_chip)
-  print(f"Legal Moves : {var.legal_moves}")
+  ##################print(f"Legal Moves : {var.legal_moves}")
   canvas.delete("moves")
   canvas_size = canvas.winfo_reqheight()
   chips_size = (canvas_size/var.board_size)

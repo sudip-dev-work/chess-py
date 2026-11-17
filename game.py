@@ -12,12 +12,12 @@ def print_board(board, empty="."):
     header = "    " + " ".join(str(c + 1).center(width) for c in range(len(board[0])))
     line = "   +" + "-" * ((width + 1) * len(board[0]) + 1)
 
-    print(header)
-    print(line)
+    ###########################print(header)
+    ###########################print(line)
     for r, row in enumerate(board):
         cells = " ".join((p if p else empty).center(width) for p in row)
-        print(f"{r + 1:>2} | {cells} |")
-    print(line)
+        ###########################print(f"{r + 1:>2} | {cells} |")
+    ###########################print(line)
 
 #dictionaries
 sym2name = {
@@ -67,9 +67,9 @@ sym2img = {
 }
 
 sym2color = {
-  "w":"white",
-  "n":"neutral",
-  "b":"black"
+  "b":"Black",
+  "w":"White",
+  "n":"Neutral"
 }
 
 def xproxy_markup(legal_moves_raw):

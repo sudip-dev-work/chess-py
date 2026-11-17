@@ -4,6 +4,7 @@ import game
 import debug
 import moves
 import animations as anim
+import note
 
 
 
@@ -27,7 +28,7 @@ def init_board(tkinter, window):
   chips_size = (canvas_size/var.board_size)
   padding = var.chips_padding * chips_size #LATER
   
-  print(f"{canvas_size}:{chips_size}")
+  ##################print(f"{canvas_size}:{chips_size}")
 
   for row in range(var.board_size):
     for col in range(var.board_size):
@@ -208,6 +209,11 @@ def spawnpc(sym, tkinter, canvas, size, x, y, slot):
     
     
 def move_piece(i_slot, t_slot, canvas, tkinter):
+    
+    #note script 
+    note.add(i_slot, t_slot)
+    note.printrec()
+    print(f"T_SLOT : {t_slot}") 
     #print("MOVE_PIECE board.py runnin...")
     subject = canvas.find_withtag(f"piece&&{i_slot}")
     if not subject:
@@ -243,4 +249,4 @@ def move_piece(i_slot, t_slot, canvas, tkinter):
     
     var.primary_chip = "None"
     var.prev_legal_slots = []
-    #print(f"MOVE PIECE INFO :: islot-{i_slot} :: tslot-{t_slot} :: {row}x{col} :: {x}x{y}")
+    ###################print(f"MOVE PIECE INFO :: islot-{i_slot} :: tslot-{t_slot} :: {row}x{col} :: {x}x{y}")

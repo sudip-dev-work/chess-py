@@ -26,6 +26,8 @@ slot_selection_border_width = 0.025
 
 #IN GAME VARS.
 mouse_pos = (0,0)
+turn = 1 #0 for black and 1 for white
+move_index = 1
 active_chip = "1_1"
 primary_chip = "1_1"
 legal_moves = []
